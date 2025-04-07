@@ -16,9 +16,16 @@ public class StartupConfig implements CommandLineRunner {
     public StartupConfig(ChatGPTRequestService chatGPTRequestService) {
         this.chatGPTRequestService = chatGPTRequestService;
     }
-
+/*
     @Override
     public void run(String... args) {
-        chatGPTRequestService.generateRecipeWithSchema().subscribe(System.out::println);
+        // Provide a query string here for the recipe generation
+        String query = "red thai curry"; // Example query
+        chatGPTRequestService.generateRecipeWithSchema(query).subscribe(
+                System.out::println,
+                error -> System.err.println("Error: " + error.getMessage()) // Handle any errors
+        );
     }
+
+ */
 }
