@@ -1,9 +1,11 @@
 package dk_kea.llmbackendproject.controller;
 
+import dk_kea.llmbackendproject.model.IngredientDTO;
 import dk_kea.llmbackendproject.service.NemligApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 public class NemligApiController {
@@ -12,7 +14,7 @@ public class NemligApiController {
     NemligApiService nemligApiService;
 
     @GetMapping("/Ingredient")
-    public void getIngredient() {
-        nemligApiService.getIngredientDTO("Mælk", 2);
+    public List<IngredientDTO> getIngredient() {
+        return nemligApiService.getIngredientDTO("Mælk", 10);
     }
 }

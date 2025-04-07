@@ -1,8 +1,11 @@
 package dk_kea.llmbackendproject.service;
 
-import dk_kea.llmbackendproject.model.Products;
+import dk_kea.llmbackendproject.model.IngredientDTO;
+import dk_kea.llmbackendproject.model.NemligApiResponse;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import java.util.List;
 
 @Service
 public class NemligApiService {
@@ -12,15 +15,17 @@ public class NemligApiService {
         this.webClient = WebClient.create("https://www.nemlig.com/");
     }
 
-    public void getIngredientDTO(String query, int amount) {
-        Products productResponseDTO = webClient.get()
-                .uri("webapi/s/0/1/0/Search/Search?query=Mælk&take=0")
+    public List<IngredientDTO> getIngredientDTO(String query, int amount) {
+        NemligApiResponse response = webClient.get()
+                .uri("webapi/s/0/1/0/Search/Search?query=" + query + "&take=" + amount)
                 .header("Accept", "application/json")
                 .retrieve()
-                .bodyToMono(Products.class)
-                .doOnTerminate(() -> System.out.println("Request completed")) // Optional: for debugging
-                .block(); // This will block and wait for the response
+                .bodyToMono(NemligApiResponse.class)
+                .doOnTerminate(() -> System.out.println("Request completed"))
+                .block();
 
-        System.out.println(productResponseDTO);
+        return response != null && response.getProductData() != null
+                ? response.getProductData().getProducts()
+                : null;
     }
 }
