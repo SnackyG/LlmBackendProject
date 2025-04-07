@@ -19,6 +19,6 @@ public class StartupConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        chatGPTRequestService.generateRecipeWithSchema().subscribe(System.out::println);
+//        chatGPTRequestService.generateRecipeWithSchema().subscribe(System.out::println);
     }
 }
