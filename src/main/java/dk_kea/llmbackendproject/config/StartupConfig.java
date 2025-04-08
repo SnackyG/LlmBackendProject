@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 public class StartupConfig implements CommandLineRunner {
     private final ChatGPTRequestService chatGPTRequestService;
 
-    @Autowired
     public StartupConfig(ChatGPTRequestService chatGPTRequestService) {
         this.chatGPTRequestService = chatGPTRequestService;
     }
