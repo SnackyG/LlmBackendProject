@@ -21,7 +21,7 @@ public class ChatGPTRequestService {
     private String key;
     private final WebClient webClient = WebClient.create("https://api.openai.com");
 
-    public Mono<Recipe> generateRecipeWithSchema(String query) {
+    public Mono<Recipe> generateRecipeWithSchema(String query, double temperature, double topP) {
 
         ChatGPTRequestReturningJSON request = ChatGPTRequestReturningJSON.builder()
                 .model("gpt-4o-mini")
@@ -37,8 +37,8 @@ public class ChatGPTRequestService {
                         )
                 ))
                 .tool_choice(new ChatGPTRequestReturningJSON.ToolChoice("function", new ChatGPTRequestReturningJSON.ToolChoice.Function("create_recipe")))
-                .temperature(1.3)
-                .top_p(0.8)
+                .temperature(temperature)
+                .top_p(topP)
                 .max_completion_tokens(3000)
                 .build();
 
