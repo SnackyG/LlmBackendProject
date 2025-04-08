@@ -19,7 +19,7 @@ public class NemligApiResponse {
     public static class ProductData {
         // Denne nøgle "Products" indeholder selve listen af produkter.
         @JsonProperty("Products")
-        private List<IngredientDTO> products;
+        private List<ProductDTO> products;
 
         // De øvrige felter fra JSON-strukturen:
         @JsonProperty("ProductGroupId")

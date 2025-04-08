@@ -1,6 +1,6 @@
 package dk_kea.llmbackendproject.controller;
 
-import dk_kea.llmbackendproject.model.IngredientDTO;
+import dk_kea.llmbackendproject.model.ProductDTO;
 import dk_kea.llmbackendproject.service.NemligApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ public class NemligApiController {
     NemligApiService nemligApiService;
 
     @GetMapping("/Ingredient/{product}/{amount}")
-    public List<IngredientDTO> getIngredient(@PathVariable String product, @PathVariable int amount) {
+    public List<ProductDTO> getIngredient(@PathVariable String product, @PathVariable int amount) {
         return nemligApiService.getIngredientDTO(product, amount);
     }
 

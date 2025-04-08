@@ -1,8 +1,8 @@
 package dk_kea.llmbackendproject.service;
 
-import dk_kea.llmbackendproject.model.IngredientDTO;
 import dk_kea.llmbackendproject.model.NemligApiResponse;
 
+import dk_kea.llmbackendproject.model.ProductDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
@@ -15,7 +15,7 @@ public class NemligApiService {
         this.webClient = WebClient.create("https://www.nemlig.com/");
     }
 
-    public List<IngredientDTO> getIngredientDTO(String query, int amount) {
+    public List<ProductDTO> getIngredientDTO(String query, int amount) {
         NemligApiResponse response = webClient.get()
                 .uri("webapi/s/0/1/0/Search/Search?query=" + query + "&take=" + amount)
                 .header("Accept", "application/json")
