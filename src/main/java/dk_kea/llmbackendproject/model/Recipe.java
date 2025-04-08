@@ -30,8 +30,10 @@ public class Recipe {
     @AllArgsConstructor
     public static class Ingredient {
         private String name;
+        private String productName;
         private double amount;
         private String unit;
+        private double price;
 
         @Override
         public String toString() {

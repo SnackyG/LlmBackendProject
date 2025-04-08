@@ -28,4 +28,15 @@ public class RecipeController {
                 .map(recipe -> ResponseEntity.ok(recipe))
                 .onErrorResume(e -> Mono.just(ResponseEntity.status(500).build())); // Handle error response
     }
+
+    @GetMapping("/generate-random-recipe")
+    public Mono<ResponseEntity<Recipe>> generateRandomRecipe() {
+        return chatGPTRequestService.generateRecipeWithSchema("Jeg vil gerne spise en tilfældig ret") // Pass the query to the service method
+                .map(recipe -> ResponseEntity.ok(recipe))
+                .onErrorResume(e -> Mono.just(ResponseEntity.status(500).build())); // Handle error response
+    }
+
+
+
+
 }

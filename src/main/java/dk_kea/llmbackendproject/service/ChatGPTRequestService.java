@@ -26,7 +26,7 @@ public class ChatGPTRequestService {
         ChatGPTRequestReturningJSON request = ChatGPTRequestReturningJSON.builder()
                 .model("gpt-4o-mini")
                 .messages(List.of(
-                        new ChatGPTRequestReturningJSON.Message("system", "Return only a recipe in JSON format matching the schema."),
+                        new ChatGPTRequestReturningJSON.Message("system", "Return only a recipe in JSON format matching the schema. The response should also be written in the danish language"),
                         new ChatGPTRequestReturningJSON.Message("user", query) // Use dynamic query here
 
                 ))
