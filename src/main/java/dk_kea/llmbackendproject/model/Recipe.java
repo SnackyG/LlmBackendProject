@@ -29,11 +29,13 @@ public class Recipe {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Ingredient {
+        private String id;
         private String name;
         private String productName;
         private double amount;
         private String unit;
         private double price;
+
 
         @Override
         public String toString() {

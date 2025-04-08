@@ -25,6 +25,8 @@ public class StartupConfig implements CommandLineRunner {
    //             System.out::println,
    //             error -> System.err.println("Error: " + error.getMessage()) // Handle any errors
    //     );
+
+//        chatGPTRequestService.generateRecipeWithSchema().subscribe(System.out::println);
     }
 
 }
