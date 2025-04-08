@@ -21,13 +21,14 @@ public class ChatGPTRequestService {
     private String key;
     private final WebClient webClient = WebClient.create("https://api.openai.com");
 
-    public Mono<Recipe> generateRecipeWithSchema() {
+    public Mono<Recipe> generateRecipeWithSchema(String query, double temperature, double topP) {
 
         ChatGPTRequestReturningJSON request = ChatGPTRequestReturningJSON.builder()
                 .model("gpt-4o-mini")
                 .messages(List.of(
-                        new ChatGPTRequestReturningJSON.Message("system", "Return only a recipe in JSON format matching the schema."),
-                        new ChatGPTRequestReturningJSON.Message("user", "Give me a quick and child friendly recipe with minced beef and carrots.")
+                        new ChatGPTRequestReturningJSON.Message("system", "Return only a recipe in JSON format matching the schema. The response should also be written in the danish language"),
+                        new ChatGPTRequestReturningJSON.Message("user", query) // Use dynamic query here
+
                 ))
                 .tools(List.of(
                         new ChatGPTRequestReturningJSON.Tool(
@@ -36,8 +37,8 @@ public class ChatGPTRequestService {
                         )
                 ))
                 .tool_choice(new ChatGPTRequestReturningJSON.ToolChoice("function", new ChatGPTRequestReturningJSON.ToolChoice.Function("create_recipe")))
-                .temperature(0.7)
-                .top_p(1.0)
+                .temperature(temperature)
+                .top_p(topP)
                 .max_completion_tokens(3000)
                 .build();
 
@@ -69,36 +70,4 @@ public class ChatGPTRequestService {
                         }
                 );
     }
-
-//    public Mono<Weather> generateWeatherWithSchema() {
-//        ChatGPTRequestReturningJSON request = ChatGPTRequestReturningJSON.builder()
-//                .model("gpt-3.5-turbo-1106")
-//                .messages(List.of(
-//                        new ChatGPTRequestReturningJSON.Message("system", "Return only weather information in JSON format matching the schema."),
-//                        new ChatGPTRequestReturningJSON.Message("user", "Give me the current weather for New York.")
-//                ))
-//                .tools(List.of(
-//                        new ChatGPTRequestReturningJSON.Tool(
-//                                "function",
-//                                new ChatGPTRequestReturningJSON.Function("get_weather", new WeatherSchemaAdapter(), true)
-//                        )
-//                ))
-//                .tool_choice(new ChatGPTRequestReturningJSON.ToolChoice("function", new ChatGPTRequestReturningJSON.ToolChoice.Function("get_weather")))
-//                .temperature(1.0)
-//                .top_p(1.0)
-//                .build();
-//
-//        return webClient.post()
-//                .uri("/v1/chat/completions")
-//                .header("Authorization", key)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .bodyValue(request)
-//                .retrieve()
-//                .bodyToMono(ChatGPTResponseFromJSON.class)
-//                .map(response -> {
-//                            System.out.println(response);
-//                            return Weather.fromJson(response.getChoices().get(0).getMessage().getTool_calls().get(0).getFunction().getArguments());
-//                        }
-//                );
-//    }
 }

@@ -19,6 +19,14 @@ public class StartupConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        // Provide a query string here for the recipe generation
+   //     String query = "red thai curry"; // Example query
+   //     chatGPTRequestService.generateRecipeWithSchema(query).subscribe(
+   //             System.out::println,
+   //             error -> System.err.println("Error: " + error.getMessage()) // Handle any errors
+   //     );
+
 //        chatGPTRequestService.generateRecipeWithSchema().subscribe(System.out::println);
     }
+
 }

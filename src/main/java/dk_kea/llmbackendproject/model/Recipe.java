@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -30,17 +31,21 @@ public class Recipe {
     public static class Ingredient {
         private String id;
         private String name;
+        private String productName;
         private double amount;
         private String unit;
-        private int price;
+        private double price;
+
 
         @Override
         public String toString() {
-            return "Ingredient{" +
-                    "name='" + name + '\'' +
-                    ", amount=" + amount +
-                    ", unit='" + unit + '\'' +
-                    '}';
+            return String.format(
+                    "    Ingredient {\n" +
+                            "      name: '%s',\n" +
+                            "      amount: %.2f,\n" +
+                            "      unit: '%s'\n" +
+                            "    }", name, amount, unit
+            );
         }
     }
 
@@ -55,15 +60,29 @@ public class Recipe {
 
     @Override
     public String toString() {
-        return "Recipe{" +
-                "title='" + title + '\'' +
-                ", servings=" + servings +
-                ", ingredients_to_buy=" + ingredients_to_buy +
-                ", ingredients_at_home=" + ingredients_at_home +
-                ", steps=" + steps +
-                ", prep_time_minutes=" + prep_time_minutes +
-                ", cook_time_minutes=" + cook_time_minutes +
-                ", tags=" + tags +
-                '}';
+        return "Recipe {\n" +
+                "  title: '" + title + "',\n" +
+                "  servings: " + servings + ",\n" +
+                "  ingredients_to_buy:\n" + formatIngredients(ingredients_to_buy) + ",\n" +
+                "  ingredients_at_home:\n" + formatIngredients(ingredients_at_home) + ",\n" +
+                "  steps:\n" + formatStringList(steps) + ",\n" +
+                "  prep_time_minutes: " + prep_time_minutes + ",\n" +
+                "  cook_time_minutes: " + cook_time_minutes + ",\n" +
+                "  tags:\n" + formatStringList(tags) + "\n" +
+                "}";
+    }
+
+    private String formatIngredients(List<Ingredient> ingredients) {
+        if (ingredients == null || ingredients.isEmpty()) return "    (none)";
+        return ingredients.stream()
+                .map(Ingredient::toString)
+                .collect(Collectors.joining("\n"));
+    }
+
+    private String formatStringList(List<String> list) {
+        if (list == null || list.isEmpty()) return "    (none)";
+        return list.stream()
+                .map(item -> "    - " + item)
+                .collect(Collectors.joining("\n"));
     }
 }
