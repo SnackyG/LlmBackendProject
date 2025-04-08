@@ -1,20 +1,31 @@
 package dk_kea.llmbackendproject.service;
 
-import dk_kea.llmbackendproject.model.IngredientDTO;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import dk_kea.llmbackendproject.model.NemligApiResponse;
 
+import dk_kea.llmbackendproject.model.ProductDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import java.util.List;
+
+@Service
 public class NemligApiService {
     private final WebClient webClient;
 
     public NemligApiService() {
-        this.webClient = WebClient.create("https://www.nemlig.com/webapi/s/0/1/0/Search/Search?");
+        this.webClient = WebClient.create("https://www.nemlig.com/");
     }
 
-    public Mono<IngredientDTO> getIngredientDTO(String query, int amount) {
-        return webClient.get()
-                .uri("query="+query+"&take="+amount) //eksempel -> query=banana&take=5
+    public List<ProductDTO> getIngredientDTO(String query, int amount) {
+        NemligApiResponse response = webClient.get()
+                .uri("webapi/s/0/1/0/Search/Search?query=" + query + "&take=" + amount)
+                .header("Accept", "application/json")
                 .retrieve()
-                .bodyToMono(IngredientDTO.class);
+                .bodyToMono(NemligApiResponse.class)
+                .doOnTerminate(() -> System.out.println("Request completed"))
+                .block();
+
+        return response != null && response.getProductData() != null
+                ? response.getProductData().getProducts()
+                : null;
     }
 }
