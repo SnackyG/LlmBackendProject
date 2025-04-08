@@ -15,7 +15,21 @@ public class NemligApiService {
         this.webClient = WebClient.create("https://www.nemlig.com/");
     }
 
-    public List<ProductDTO> getIngredientDTO(String query, int amount) {
+    public ProductDTO getCheapestIngredient (String query, int amount)  {
+        List<ProductDTO> listOfProducts = getIngredientsFromNemligBySearchWord(query, amount);
+
+        ProductDTO productToReturn = listOfProducts.get(0);
+
+        for (ProductDTO product : listOfProducts) {
+            if(product.getPrice() < productToReturn.getPrice()) {
+                productToReturn = product;
+            }
+        }
+
+        return productToReturn;
+    }
+
+    public List<ProductDTO> getIngredientsFromNemligBySearchWord(String query, int amount) {
         NemligApiResponse response = webClient.get()
                 .uri("webapi/s/0/1/0/Search/Search?query=" + query + "&take=" + amount)
                 .header("Accept", "application/json")
@@ -23,6 +37,7 @@ public class NemligApiService {
                 .bodyToMono(NemligApiResponse.class)
                 .doOnTerminate(() -> System.out.println("Request completed"))
                 .block();
+
 
         return response != null && response.getProductData() != null
                 ? response.getProductData().getProducts()

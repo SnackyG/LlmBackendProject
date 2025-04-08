@@ -15,8 +15,12 @@ public class NemligApiController {
     NemligApiService nemligApiService;
 
     @GetMapping("/Ingredient/{product}/{amount}")
-    public List<ProductDTO> getIngredient(@PathVariable String product, @PathVariable int amount) {
-        return nemligApiService.getIngredientDTO(product, amount);
+    public ProductDTO getIngredient(@PathVariable String product, @PathVariable int amount) {
+        return nemligApiService.getCheapestIngredient(product, amount);
     }
 
+    @GetMapping("/Ingredients/{product}/{amount}")
+    public List<ProductDTO> getIngredientsFromNemligBySearchWord(@PathVariable String product, @PathVariable int amount) {
+        return nemligApiService.getIngredientsFromNemligBySearchWord(product, amount);
+    }
 }
