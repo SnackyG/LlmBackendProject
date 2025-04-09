@@ -5,8 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk_kea.llmbackendproject.chat_gpt.ChatGPTRequestReturningJSON;
 import dk_kea.llmbackendproject.chat_gpt.ChatGPTResponseFromJSON;
+import dk_kea.llmbackendproject.mapper.RecipeMapper;
 import dk_kea.llmbackendproject.model.ProductDTO;
 import dk_kea.llmbackendproject.model.Recipe;
+import dk_kea.llmbackendproject.repository.SavedRecipeRepository;
 import dk_kea.llmbackendproject.schema.RecipeSchemaAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,5 +90,16 @@ public class ChatGPTRequestService {
         }
 
         return Mono.just(recipe);
+    }
+    @Autowired
+    private SavedRecipeRepository savedRecipeRepository;
+
+    public Mono<Recipe> generateAndSaveRecipe(String query, double temperature, double topP) {
+        return generateRecipeWithSchema(query, temperature, topP)
+                .map(recipe -> {
+                    savedRecipeRepository.save(RecipeMapper.toEntity(recipe));
+                    return recipe;
+                });
+
     }
 }
