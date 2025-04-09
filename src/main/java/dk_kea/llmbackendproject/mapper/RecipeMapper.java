@@ -25,7 +25,7 @@ public class RecipeMapper {
                 null,
                 ingredient.getId(),
                 ingredient.getName(),
-                ingredient.getProductName(),
+                ingredient.getBrand(),
                 ingredient.getAmount(),
                 ingredient.getUnit(),
                 ingredient.getPrice()

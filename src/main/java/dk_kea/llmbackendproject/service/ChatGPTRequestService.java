@@ -26,6 +26,8 @@ public class ChatGPTRequestService {
     private final WebClient webClient = WebClient.create("https://api.openai.com");
     @Autowired
     NemligApiService nemligApiService;
+    @Autowired
+    private SavedRecipeRepository savedRecipeRepository;
 
     public Mono<Recipe> generateRecipeWithSchema(String query, double temperature, double topP) {
 
@@ -91,8 +93,7 @@ public class ChatGPTRequestService {
 
         return Mono.just(recipe);
     }
-    @Autowired
-    private SavedRecipeRepository savedRecipeRepository;
+
 
     public Mono<Recipe> generateAndSaveRecipe(String query, double temperature, double topP) {
         return generateRecipeWithSchema(query, temperature, topP)
