@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk_kea.llmbackendproject.chat_gpt.ChatGPTRequestReturningJSON;
 import dk_kea.llmbackendproject.chat_gpt.ChatGPTResponseFromJSON;
 import dk_kea.llmbackendproject.mapper.RecipeMapper;
+import dk_kea.llmbackendproject.model.ProductDTO;
 import dk_kea.llmbackendproject.model.Recipe;
 import dk_kea.llmbackendproject.repository.SavedRecipeRepository;
 import dk_kea.llmbackendproject.schema.RecipeSchemaAdapter;
@@ -23,6 +24,8 @@ public class ChatGPTRequestService {
     @Value("${openai.key}")
     private String key;
     private final WebClient webClient = WebClient.create("https://api.openai.com");
+    @Autowired
+    NemligApiService nemligApiService;
 
     public Mono<Recipe> generateRecipeWithSchema(String query, double temperature, double topP) {
 
@@ -52,9 +55,9 @@ public class ChatGPTRequestService {
             throw new RuntimeException("Error converting request to JSON", e);
         }
 
-        return webClient.post()
+        Recipe recipe = webClient.post()
                 .uri("/v1/chat/completions")
-                .header("Authorization", "Bearer " +  key)
+                .header("Authorization", "Bearer " + key)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
@@ -67,11 +70,26 @@ public class ChatGPTRequestService {
 //                                })
 //                )
                 .bodyToMono(ChatGPTResponseFromJSON.class)
-                .map(response -> {
-                            System.out.println(response);
-                            return Recipe.fromJson(response.getChoices().get(0).getMessage().getTool_calls().get(0).getFunction().getArguments());
-                        }
-                );
+                .map(response -> Recipe.fromJson(response.getChoices().get(0).getMessage().getTool_calls().get(0).getFunction().getArguments()))
+                .block();
+
+        for(int i = 0; i < recipe.getIngredients_to_buy().size(); i++) {
+            ProductDTO productDTO = nemligApiService.getCheapestIngredient(recipe.getIngredients_to_buy().get(i).getName(), 15);
+            recipe.getIngredients_to_buy().get(i).setName(productDTO.getName());
+            recipe.getIngredients_to_buy().get(i).setPrice(productDTO.getPrice());
+            recipe.getIngredients_to_buy().get(i).setId(productDTO.getId());
+            recipe.getIngredients_to_buy().get(i).setBrand(productDTO.getBrand());
+        }
+
+        for(int i = 0; i < recipe.getIngredients_at_home().size(); i++) {
+            ProductDTO productDTO = nemligApiService.getCheapestIngredient(recipe.getIngredients_at_home().get(i).getName(), 15);
+            recipe.getIngredients_at_home().get(i).setName(productDTO.getName());
+            recipe.getIngredients_at_home().get(i).setPrice(productDTO.getPrice());
+            recipe.getIngredients_at_home().get(i).setId(productDTO.getId());
+            recipe.getIngredients_at_home().get(i).setBrand(productDTO.getBrand());
+        }
+
+        return Mono.just(recipe);
     }
     @Autowired
     private SavedRecipeRepository savedRecipeRepository;
