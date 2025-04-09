@@ -70,21 +70,28 @@ public class ChatGPTRequestService {
                 .bodyToMono(ChatGPTResponseFromJSON.class)
                 .map(response -> Recipe.fromJson(response.getChoices().get(0).getMessage().getTool_calls().get(0).getFunction().getArguments()))
                 .block();
-
-        for(int i = 0; i < recipe.getIngredients_to_buy().size(); i++) {
-            ProductDTO productDTO = nemligApiService.getCheapestIngredient(recipe.getIngredients_to_buy().get(i).getName(), 15);
-            recipe.getIngredients_to_buy().get(i).setName(productDTO.getName());
-            recipe.getIngredients_to_buy().get(i).setPrice(productDTO.getPrice());
-            recipe.getIngredients_to_buy().get(i).setId(productDTO.getId());
-            recipe.getIngredients_to_buy().get(i).setBrand(productDTO.getBrand());
+        
+        if (recipe.getIngredients_to_buy() != null) {
+            for (int i = 0; i < recipe.getIngredients_to_buy().size(); i++) {
+                ProductDTO productDTO = nemligApiService.getCheapestIngredient(recipe.getIngredients_to_buy().get(i).getName(), 15);
+                if (productDTO != null) {
+                    recipe.getIngredients_to_buy().get(i).setName(productDTO.getName());
+                    recipe.getIngredients_to_buy().get(i).setPrice(productDTO.getPrice());
+                    recipe.getIngredients_to_buy().get(i).setId(productDTO.getId());
+                    recipe.getIngredients_to_buy().get(i).setBrand(productDTO.getBrand());
+                }
+            }
         }
-
-        for(int i = 0; i < recipe.getIngredients_at_home().size(); i++) {
-            ProductDTO productDTO = nemligApiService.getCheapestIngredient(recipe.getIngredients_at_home().get(i).getName(), 15);
-            recipe.getIngredients_at_home().get(i).setName(productDTO.getName());
-            recipe.getIngredients_at_home().get(i).setPrice(productDTO.getPrice());
-            recipe.getIngredients_at_home().get(i).setId(productDTO.getId());
-            recipe.getIngredients_at_home().get(i).setBrand(productDTO.getBrand());
+        if (recipe.getIngredients_at_home() != null) {
+            for (int i = 0; i < recipe.getIngredients_at_home().size(); i++) {
+                ProductDTO productDTO = nemligApiService.getCheapestIngredient(recipe.getIngredients_at_home().get(i).getName(), 15);
+                if (productDTO != null) {
+                    recipe.getIngredients_at_home().get(i).setName(productDTO.getName());
+                    recipe.getIngredients_at_home().get(i).setPrice(productDTO.getPrice());
+                    recipe.getIngredients_at_home().get(i).setId(productDTO.getId());
+                    recipe.getIngredients_at_home().get(i).setBrand(productDTO.getBrand());
+                }
+            }
         }
 
         return Mono.just(recipe);

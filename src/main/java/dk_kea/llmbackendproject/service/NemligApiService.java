@@ -18,6 +18,10 @@ public class NemligApiService {
     public ProductDTO getCheapestIngredient (String query, int amount)  {
         List<ProductDTO> listOfProducts = getIngredientsFromNemligBySearchWord(query, amount);
 
+        if (listOfProducts == null || listOfProducts.isEmpty()) {
+            return null;
+        }
+
         ProductDTO productToReturn = listOfProducts.get(0);
 
         for (ProductDTO product : listOfProducts) {
@@ -35,7 +39,6 @@ public class NemligApiService {
                 .header("Accept", "application/json")
                 .retrieve()
                 .bodyToMono(NemligApiResponse.class)
-                .doOnTerminate(() -> System.out.println("Request completed"))
                 .block();
 
 
