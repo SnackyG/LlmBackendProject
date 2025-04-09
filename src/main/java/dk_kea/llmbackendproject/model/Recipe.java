@@ -31,7 +31,7 @@ public class Recipe {
     public static class Ingredient {
         private String id;
         private String name;
-        private String productName;
+        private String brand;
         private double amount;
         private String unit;
         private double price;
