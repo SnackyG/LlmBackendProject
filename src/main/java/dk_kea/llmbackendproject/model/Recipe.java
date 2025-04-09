@@ -23,6 +23,7 @@ public class Recipe {
     private int prep_time_minutes;
     private int cook_time_minutes;
     private List<String> tags;
+    private String description;
 
     @Getter
     @Setter

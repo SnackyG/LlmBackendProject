@@ -2,15 +2,20 @@ package dk_kea.llmbackendproject.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@Data
+
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+
 public class SavedRecipe {
 
     @Id
@@ -21,6 +26,9 @@ public class SavedRecipe {
     private int servings;
     private int prepTimeMinutes;
     private int cookTimeMinutes;
+
+    private String description;
+
 
     @ElementCollection
     private List<String> steps;
