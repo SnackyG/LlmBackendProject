@@ -1,10 +1,16 @@
 package dk_kea.llmbackendproject.service;
 
+import dk_kea.llmbackendproject.mapper.RecipeMapper;
 import dk_kea.llmbackendproject.model.NemligApiResponse;
 
 import dk_kea.llmbackendproject.model.ProductDTO;
+import dk_kea.llmbackendproject.model.Recipe;
+import dk_kea.llmbackendproject.repository.SavedRecipeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
 import java.util.List;
 
 @Service
@@ -15,13 +21,13 @@ public class NemligApiService {
         this.webClient = WebClient.create("https://www.nemlig.com/");
     }
 
-    public ProductDTO getCheapestIngredient (String query, int amount)  {
+    public ProductDTO getCheapestIngredient(String query, int amount) {
         List<ProductDTO> listOfProducts = getIngredientsFromNemligBySearchWord(query, amount);
 
         ProductDTO productToReturn = listOfProducts.get(0);
 
         for (ProductDTO product : listOfProducts) {
-            if(product.getPrice() < productToReturn.getPrice()) {
+            if (product.getPrice() < productToReturn.getPrice()) {
                 productToReturn = product;
             }
         }
@@ -43,4 +49,5 @@ public class NemligApiService {
                 ? response.getProductData().getProducts()
                 : null;
     }
+
 }
