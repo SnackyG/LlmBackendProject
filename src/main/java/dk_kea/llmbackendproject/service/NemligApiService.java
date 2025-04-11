@@ -1,13 +1,17 @@
 package dk_kea.llmbackendproject.service;
 
+import dk_kea.llmbackendproject.model.*;
 import dk_kea.llmbackendproject.mapper.RecipeMapper;
-import dk_kea.llmbackendproject.model.NemligApiResponse;
 
-import dk_kea.llmbackendproject.model.ProductDTO;
-import dk_kea.llmbackendproject.model.Recipe;
 import dk_kea.llmbackendproject.repository.SavedRecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -45,6 +49,7 @@ public class NemligApiService {
                 .header("Accept", "application/json")
                 .retrieve()
                 .bodyToMono(NemligApiResponse.class)
+                .doOnTerminate(() -> System.out.println("Request completed"))
                 .block();
 
 
@@ -53,4 +58,42 @@ public class NemligApiService {
                 : null;
     }
 
+    public Mono<ResponseEntity<AddToBasketDTO>> addToBasket(String productId, int quantity, HttpServletRequest request, HttpServletResponse httpServletResponse) {
+        String cookies = request.getHeader("Cookie");
+
+        return webClient.post()
+                .uri("webapi/basket/AddToBasket")
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .header(HttpHeaders.COOKIE, cookies)  // Pass cookies here
+                .body(BodyInserters.fromValue(new AddToBasketRequestDTO(productId, quantity)))
+                .exchangeToMono(response -> {
+                    List<String> moreCookies = response.headers().header("Set-Cookie");
+                    return response.bodyToMono(AddToBasketDTO.class).map(dto -> {
+                        for (String cookie : moreCookies) {
+                            httpServletResponse.addHeader("Set-Cookie", cookie);
+                        }
+                        return ResponseEntity.ok(dto);
+                    });
+                });
+    }
+
+
+    public Mono<ResponseEntity<String>> login(Credentials credentials, HttpServletResponse httpServletResponse) {
+        return webClient.post()
+                .uri("webapi/login/login")
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .bodyValue(new Credentials(credentials.getUsername(), credentials.getPassword()))
+                .exchangeToMono(response -> {
+                    // Get the 'Set-Cookie' headers from the response
+                    List<String> cookies = response.headers().header("Set-Cookie");
+
+                    // Iterate over the cookies and add each one to the response
+                    for (String cookie : cookies) {
+                        httpServletResponse.addHeader("Set-Cookie", cookie);
+                    }
+
+                    // Return a success response
+                    return Mono.just(ResponseEntity.ok(""));
+                });
+    }
 }
