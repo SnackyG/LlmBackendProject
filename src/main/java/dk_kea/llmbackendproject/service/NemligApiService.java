@@ -2,9 +2,13 @@ package dk_kea.llmbackendproject.service;
 
 import dk_kea.llmbackendproject.model.AddToBasketRequestDTO;
 import dk_kea.llmbackendproject.model.Credentials;
+import dk_kea.llmbackendproject.mapper.RecipeMapper;
 import dk_kea.llmbackendproject.model.NemligApiResponse;
 
 import dk_kea.llmbackendproject.model.ProductDTO;
+import dk_kea.llmbackendproject.model.Recipe;
+import dk_kea.llmbackendproject.repository.SavedRecipeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +30,10 @@ public class NemligApiService {
 
     public ProductDTO getCheapestIngredient(String query, int amount) {
         List<ProductDTO> listOfProducts = getIngredientsFromNemligBySearchWord(query, amount);
+
+        if (listOfProducts == null || listOfProducts.isEmpty()) {
+            return null;
+        }
 
         ProductDTO productToReturn = listOfProducts.get(0);
 

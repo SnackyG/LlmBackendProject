@@ -8,8 +8,8 @@ import java.util.Map;
 public class RecipeSchemaAdapter implements Parameters {
 
     private static final List<String> UNIT_ENUM = List.of(
-            "gram", "milliliter", "liter", "teaspoon",
-            "tablespoon", "piece", "deciliter", "kilogram"
+            "gram", "milliliter", "liter", "tsk",
+            "spsk", "stk", "deciliter", "kilogram"
     );
 
     private static Map<String, Object> ingredientSchema() {

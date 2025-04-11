@@ -20,9 +20,10 @@ public class NemligApiController {
     @Autowired
     NemligApiService nemligApiService;
 
-    @GetMapping("/Ingredient/{product}/{amount}")
-    public ProductDTO getIngredient(@PathVariable String product, @PathVariable int amount) {
-        return nemligApiService.getCheapestIngredient(product, amount);
+    @GetMapping("/Ingredient/{product}")
+    public ProductDTO getIngredient(@PathVariable String product) {
+
+        return nemligApiService.getCheapestIngredient(product, 15);
     }
 
     @GetMapping("/Ingredients/{product}/{amount}")
