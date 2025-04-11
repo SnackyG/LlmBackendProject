@@ -25,11 +25,16 @@ public class RecipeController {
     }
 
     // Example endpoint that generates a recipe based on a query (e.g., "red thai curry")
+
+    //http://localhost:8080/generate-recipe?query=Lav en opskrift med broccoli
     @GetMapping("/generate-recipe")
     public Mono<ResponseEntity<Recipe>> generateRecipe(
             @RequestParam String query,
             @RequestParam(defaultValue = "1.3") double temperature,
             @RequestParam(defaultValue = "0.8") double topP) {
+
+        System.out.println("Temp value " + temperature);
+        System.out.println("Top P value " + topP);
 
         return chatGPTRequestService.generateRecipeWithSchema(query, temperature, topP) // Pass the query to the service method
                 .map(recipe -> ResponseEntity.ok(recipe))
@@ -38,24 +43,30 @@ public class RecipeController {
 
     @GetMapping("/generate-random-recipe")
     public Mono<ResponseEntity<Recipe>> generateRandomRecipe() {
-        // Tilfældige kategorier for mere variation
-        List<String> categories = List.of(
-                "vegansk", "vegetarisk", "med fisk", "med oksekød", "med svinekød",
-                "med linser", "asiatisk", "mexicansk", "italiensk", "med aubergine"
+        // Hovedingredienser og køkkener
+        List<String> ingredients = List.of("kylling", "oksekød", "gris", "fisk", "vegetarisk", "vegansk", "smør");
+        List<String> cuisines = List.of("italiensk", "mexicansk", "thai", "indisk", "dansk", "japansk", "mellemøstlig", "fransk", "svensk", "norsk", "finsk");
+
+        // Tilfældige valg
+        String chosenIngredient = ingredients.get(ThreadLocalRandom.current().nextInt(ingredients.size()));
+        String chosenCuisine = cuisines.get(ThreadLocalRandom.current().nextInt(cuisines.size()));
+        double temperature = ThreadLocalRandom.current().nextDouble(1.0, 1.8);
+        double topP = ThreadLocalRandom.current().nextDouble(0.75, 1.0);
+
+        // Generér prompten
+        String randomQuery = String.format(
+                "Lav en %s ret fra det %s køkken.",
+                chosenIngredient, chosenCuisine
         );
 
-        // Vælg en tilfældig kategori
-        String randomCategory = categories.get(ThreadLocalRandom.current().nextInt(categories.size()));
-
-        // Byg prompten
-        String randomQuery = "Lav en " + randomCategory + " ret til aftensmad";
-
-        // Tilfældige temperatur/top_p værdier
-        double temperature = ThreadLocalRandom.current().nextDouble(1.0, 1.8); // mellem 1.0 og 1.8
-        double topP = ThreadLocalRandom.current().nextDouble(0.75, 1.0);       // mellem 0.75 og 1.0
+        // Log valgene
+        System.out.println("➡️ Ingrediens: " + chosenIngredient);
+        System.out.println("➡️ Køkken: " + chosenCuisine);
+        System.out.println("🌡️ Temperatur: " + temperature);
+        System.out.println("🎯 Top P: " + topP);
 
         return chatGPTRequestService.generateRecipeWithSchema(randomQuery, temperature, topP)
-                .map(ResponseEntity::ok)
+                .map(recipe -> ResponseEntity.ok(recipe))
                 .onErrorResume(e -> Mono.just(ResponseEntity.status(500).build()));
     }
 
